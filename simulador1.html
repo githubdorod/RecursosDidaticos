@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1.0">
+    <title>SIMULADOR DE DINÂMICA POPULACIONAL - 01</title>
+
+    <!-- TODO CÓDIGO CSS AQUI -->
+    <style>
+        /* TODO CÓDIGO CSS AQUI */
+        body {
+            background: linear-gradient(to bottom, rgb(0, 0, 0, 0.05), rgb(128, 128, 128, 0.3));
+            padding: 0.5vw;
+            margin: 0;
+        }
+
+        header {}
+
+        .simulador {
+            width: 60vw;
+            position: relative;
+            float: left;
+            margin: 0;
+        }
+
+        #simulador1 {
+            display: block;
+            width: 50vw;
+            height: 50vw;
+            margin: 1vw auto 2vw;
+            border: 0.2vw solid rgb(0, 0, 0);
+            border-radius: 3%;
+            background-color: rgba(258, 258, 258, 1);
+        }
+
+        .sidebar {
+            display: block;
+            background-color: white;
+            width: 35vw;
+            position: relative;
+            float: right;
+            border: 0.2vw solid rgb(0, 0, 0);
+            border-radius: 3%;
+            margin: 1vw auto 2vw;
+        }
+
+        .controle {
+            background: linear-gradient(to bottom, rgb(0, 0, 0, 0.05), rgb(128, 128, 128, 0.3));
+            padding: 6px 10px 5px 1px;
+            margin-left: 10px;
+            width: 200px;
+            border-radius: 10vh;
+            position: relative;
+            display: flex;
+            justify-content: center;
+        }
+
+        .rangeAA,
+        .rangeAa,
+        .rangeaa,
+        .rangePopulacao {
+            width: 150px;
+            height: 8px;
+            appearance: none;
+            background-color: rgba(128, 128, 128, 0.1);
+            border-radius: 50px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .rangeAA::-webkit-slider-thumb,
+        .rangeAa::-webkit-slider-thumb,
+        .rangeaa::-webkit-slider-thumb,
+        .rangePopulacao::-webkit-slider-thumb {
+            appearance: none;
+            width: 10px;
+            height: 10px;
+            background-color: rgba(0, 0, 0, 1);
+            border-radius: 50px;
+            box-shadow: -208px 0px 0px 200px rgba(0, 0, 0, 0.5);
+        }
+
+        .rangeAA {
+            background-color: rgba(258, 128, 128, 0.1);
+        }
+
+        .rangeAA::-webkit-slider-thumb {
+            background-color: rgba(258, 0, 0, 1);
+            box-shadow: -208px 0px 0px 200px rgba(258, 0, 0, 0.5);
+        }
+
+        .rangeAa {
+            background-color: rgba(128, 258, 128, 0.1);
+        }
+
+        .rangeAa::-webkit-slider-thumb {
+            background-color: rgba(0, 258, 0, 1);
+            box-shadow: -208px 0px 0px 200px rgba(0, 258, 0, 0.5);
+        }
+
+        .rangeaa {
+            background-color: rgba(128, 128, 258, 0.1);
+        }
+
+        .rangeaa::-webkit-slider-thumb {
+            background-color: rgba(0, 0, 258, 1);
+            box-shadow: -208px 0px 0px 200px rgba(0, 0, 258, 0.5);
+        }
+
+        footer {
+            border: 2px solid rgb(0, 0, 0);
+            border-radius: 40px;
+            background-color: rgba(258, 258, 258, 1);
+            width: 90vw;
+            clear: both;
+            margin: 0 auto 15vh;
+            padding: 10px;
+            text-align: center;
+
+        }
+
+        #rangeValueAA,
+        #rangeValueAa,
+        #rangeValueaa,
+        #rangePopulacaoSlider {
+            background-color: rgba(0, 0, 0, 1);
+            position: relative;
+            text-align: center;
+            width: 3vw;
+            font-weight: bolder;
+            color: rgba(258, 258, 258, 1);
+            border-radius: 25px;
+        }
+
+        #rangeValueAA {
+            background-color: rgba(258, 0, 0, 1);
+        }
+
+        #rangeValueAa {
+            background-color: rgba(0, 258, 0, 1);
+        }
+
+        #rangeValueaa {
+            background-color: rgba(0, 0, 258, 1);
+        }
+
+        #botaoAlerta {
+            position: relative;
+            width: 40px;
+            height: 20px;
+            -webkit-appearance: none;
+            background: rgba(198, 198, 198, 1);
+            outline: none;
+            border-radius: 20px;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+            transition: 0.5s;
+        }
+
+        #botaoAlerta:checked {
+            background-color: rgba(3, 169, 244, 1);
+        }
+
+        #botaoAlerta:before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 20px;
+            top: 0;
+            left: 0;
+            background: rgba(255, 255, 255, 0.8);
+            transform: scale(1.1);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: 0.5s;
+        }
+
+        #botaoAlerta:checked:before {
+            left: 20px;
+        }
+
+        #botaoInicia {
+            display: block;
+            margin: 0 auto;
+            appearance: none;
+            font-size: 18px;
+            font-weight: bolder;
+            background: rgba(30, 144, 255, 1);
+            width: 160px;
+            padding: 10px 20px;
+            color: rgba(255, 255, 255, 0.9);
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+
+        }
+
+        h1 {
+            color: rgba(0, 0, 0, 0.9);
+            font-family: sans-serif;
+            text-align: center;
+        }
+
+        h2 {
+            font-family: 'Times New Roman';
+            position: relative;
+            display: block;
+            text-align: center;
+            text-decoration: underline;
+        }
+
+        h3 {
+            font-family: 'Times New Roman';
+            margin: 0 0 0 10px;
+        }
+
+        p {
+            font-family: 'Times New Roman';
+            margin: 0 0 0 10px;
+        }
+    </style> <!-- CÓDIGO CSS FINALIZA AQUI -->
+    <!-- CÓDIGO CSS FINALIZA AQUI -->
+</head>
+
+<body>
+    <header>
+        <h1>Simulador de Dinâmica Populacional - 01</h1>
+    </header>
+    <div class="simulador">
+        <canvas id="simulador1" width="300px" height="300px">
+            Ops! Parece que seu navegador não suporta o CANVAS!
+        </canvas>
+    </div>
+    <div class="sidebar">
+        <p>Obs.: Esta página foi planejada para <i>desktop</i> e não está responsiva para dispositivos móveis (ainda).
+            Se estiver acessando de um celular, é sugerido utilizar no modo paisagem para uma melhor experiência.</p>
+        <h2>CONTROLE</h2><br />
+        <form>
+            <h3>Homozigotos Dominantes (AA):</h3>
+            <div class="controle">
+                <input type="range" class="rangeAA" min="0" max="9" onclick="AA.arrayLeght=homozigotosDominantes.value"
+                    value="3" id="homozigotosDominantes" onmousemove="rangeAASlider(this.value)" />
+                <span id="rangeValueAA">3</span>
+                <script>
+                    function rangeAASlider(value) {
+                        document.getElementById('rangeValueAA').innerHTML = value;
+                    }
+                </script>
+            </div>
+            <br />
+            <h3>Heterozigotos (Aa):</h3>
+            <div class="controle">
+                <input type="range" class="rangeAa" min="0" max="9" onclick="Aa.arrayLeght=heterozigotos.value"
+                    value="3" id="heterozigotos" onmousemove="rangeAaSlider(this.value)" />
+                <span id="rangeValueAa">3</span>
+                <script>
+                    function rangeAaSlider(value) {
+                        document.getElementById('rangeValueAa').innerHTML = value;
+                    }
+                </script>
+            </div>
+            <br />
+            <h3>Homozigotos Recessivos (aa):</h3>
+            <div class="controle">
+                <input type="range" class="rangeaa" min="0" max="9" onclick="aa.arrayLeght=homozigotosRecessivos.value"
+                    value="3" id="homozigotosRecessivos" onmousemove="rangeaaSlider(this.value)" />
+                <span id="rangeValueaa">3</span>
+                <script>
+                    function rangeaaSlider(value) {
+                        document.getElementById('rangeValueaa').innerHTML = value;
+                    }
+                </script>
+            </div>
+            <br />
+            <h3>POPULAÇÃO MÁXIMA:</h3>
+            <div class="controle">
+                <input type="range" class="rangePopulacao" id="rangePopulacao" min="50" max="300" step="50" value="100"
+                    onmousemove="rangePopulacaoSlider(this.value), limiteIndividuos=rangePopulacao.value" />
+                <span id="rangePopulacaoSlider">100</span>
+                <script>
+                    function rangePopulacaoSlider(value) {
+                        document.getElementById('rangePopulacaoSlider').innerHTML = value;
+                    }
+                </script>
+            </div>
+            <br /><br /><br /><br />
+            <input type="checkbox" id="botaoAlerta" onclick="alertaCruzamento=!alertaCruzamento">
+            <span onclick="document.getElementById('botaoAlerta').click()" style="cursor: pointer;">Informar
+                cruzamentos</span>
+            <br /><br />
+            <input type="button" id="botaoInicia" onclick="desenha(), loop()" value="INICIAR" />
+            <!-- <input type="button" onclick="desenha()" value="INICIAR" /> -->
+            <br />
+        </form>
+        <p>O "Simulador de Dinâmica Populacional - 01" permite escolher a população inicial de indivíduos de cada
+            genótipo possível, considerando um indivíduo diploide. Também é possível escolher a população máxima que a
+            simulação atingirá.</p>
+        <p>Algumas coisas legais para se fazer são:</p>
+        <ol>
+            <li>Iniciar uma população apenas com indivíduos heterozigotos;</li>
+            <li>Iniciar uma população com bastantes indivíduos heterozigotos recessivos e um ou dois heterozigotos;</li>
+            <li>Criar uma série de repetições da mesma população inicial e analisar, por meio de probabilidade, os
+                resultados obtidos.</li>
+        </ol>
+        <p>A opção de "informar cruzamentos" permite acompanhar a evolução do jogo, mas pode tornar mais demorado. Essa
+            opção pode ser marcada ou desmarcada com a simulação de curso.</p>
+        <p>As outras opções não devem ser alteradas enquantos o simulador estiver em funcionamento, pois irá alterar os
+            dados.</p>
+        <p>Ao final da simulação, mostraremos os resultados obtidos e, para reiniciar, é preciso atualizar a página.</p>
+        <p>É possível que haja alguns indivíduos a mais do que a população máxima definida, pois pode haver dois ou três
+            cruzamentos simultâneos no último momento.</p>
+    </div>
+
+    <footer>
+        <h3>E-mail para contato: rodolfobarreto92@gmail.com --- Redes sociais: <a href="https://linktr.ee/rodporto" target="_blank">Linktree</a></h3>
+        <p>Se utilizar este recurso para sua aula, por favor, me escreva contando a experiência e com sugestões de melhorias. Divirta-se!</p>
+    </footer>
+    <!-- TODO CÓDIGO JAVASCRIPT AQUI! -->
+    <script> // TODO CÓDIGO JAVASCRIPT AQUI!
+        // TODO CÓDIGO JAVASCRIPT AQUI!
+        let canvas = document.getElementById("simulador1");
+        let ctx = canvas.getContext('2d');
+        let largCanvas = altCanvas = 300;
+        raio = 1;
+        let limiteIndividuos = 100;
+        // INFORMAÇÕES DOS HOMOZIGOTOS DOMINANTES
+        var alertaCruzamento = Boolean(false);          // Verificar o input checkbox acima
+        var AA = [];                                    // Esta array guarda a quantidade de indivíduos AA (e também a cor vermelha);
+        AA.arrayLeght = homozigotosDominantes.value;
+        var AAx = [];                                   // Esta array guarda a posição inicial x dos indivíduos AA;
+        AAx.arrayLeght = homozigotosDominantes.value;
+        var AAy = [];                                   // Esta array guarda a posição inicial y dos indivíduos AA;
+        AAy.arrayLeght = homozigotosDominantes.value;
+        var AAdx = [];                                  // Esta array guarda a posição inicial y dos indivíduos AA;
+        AAdx.arrayLeght = limiteIndividuos;
+        var AAdy = [];                                  // Esta array guarda a posição inicial y dos indivíduos AA;
+        AAdy.arrayLeght = limiteIndividuos;
+        for (let i = 0; i < limiteIndividuos; i++) {
+            if (i % 2 == 0) {
+                AAdx[i] = (Math.random() * 1);
+                AAdy[i] = (Math.random() * 1);
+            } else {
+                AAdx[i] = (Math.random() * -1);
+                AAdy[i] = (Math.random() * -1);
+            };
+        };
+        // INFORMAÇÕES DOS HETEROZIGOTOS
+        var Aa = [];                                    // Esta array guarda a quantidade de indivíduos Aa (e também a cor verde);
+        Aa.arrayLeght = heterozigotos.value;
+        var Aax = [];                                   // Esta array guarda a posição inicial x dos indivíduos Aa;
+        Aax.arrayLeght = heterozigotos.value;
+        var Aay = [];                                   // Esta array guarda a posição inicial y dos indivíduos Aa;
+        Aay.arrayLeght = heterozigotos.value;
+        var Aadx = [];                                  // Esta array guarda a posição inicial y dos indivíduos Aa;
+        Aadx.arrayLeght = limiteIndividuos;
+        var Aady = [];                                  // Esta array guarda a posição inicial y dos indivíduos Aa;
+        Aady.arrayLeght = limiteIndividuos;
+        for (let i = 0; i < limiteIndividuos; i++) {
+            if (i % 2 == 0) {
+                Aadx[i] = (Math.random() * 1);
+                Aady[i] = (Math.random() * 1);
+            } else {
+                Aadx[i] = (Math.random() * -1);
+                Aady[i] = (Math.random() * -1);
+            };
+        };
+        // INFORMAÇÕES DOS HOMOZIGOTOS RECESSIVOS
+        var aa = [];                                    // Esta array guarda a quantidade de indivíduos aa (e também a cor azul);
+        aa.arrayLeght = homozigotosRecessivos.value;
+        var aax = [];                                   // Esta array guarda a posição inicial x dos indivíduos aa;
+        aax.arrayLeght = homozigotosRecessivos.value;
+        var aay = [];                                   // Esta array guarda a posição inicial y dos indivíduos aa;
+        aay.arrayLeght = homozigotosRecessivos.value;
+        var aadx = [];                                  // Esta array guarda a posição inicial y dos indivíduos aa;
+        aadx.arrayLeght = limiteIndividuos;
+        var aady = [];                                  // Esta array guarda a posição inicial y dos indivíduos aa;
+        aady.arrayLeght = limiteIndividuos;
+        for (let i = 0; i < limiteIndividuos; i++) {
+            if (i % 2 == 0) {
+                aadx[i] = (Math.random() * 1);
+                aady[i] = (Math.random() * 1);
+            } else {
+                aadx[i] = (Math.random() * -1);
+                aady[i] = (Math.random() * -1);
+            };
+        };
+        function atualiza() {
+            ctx.clearRect(0, 0, largCanvas, altCanvas);
+
+            ctx.font = "10px arial";
+            ctx.strokeStyle = "rgb(255,0,0)";
+            ctx.fillStyle = "rgb(255,0,0)";
+            ctx.strokeText("AA= " + AA.arrayLeght, 10, 10);
+            ctx.strokeStyle = "rgb(0,255,0)";
+            ctx.fillStyle = "rgb(0,255,0)";
+            ctx.strokeText("Aa= " + Aa.arrayLeght, 10, 20);
+            ctx.strokeStyle = "rgb(0,0,255)";
+            ctx.fillStyle = "rgb(0,0,255)";
+            ctx.strokeText("aa= " + aa.arrayLeght, 10, 30);
+            // ATUALIZAÇÃO DAS INFORMAÇÕES DOS HETEROZIGOTOS
+            for (let i = 0; i < Aa.arrayLeght; i++) {
+                if ((Aax[i] + raio > largCanvas) || (Aax[i] < 0)) {
+                    Aadx[i] *= -1;
+                }
+                if ((Aay[i] + raio > altCanvas) || (Aay[i] < 0)) {
+                    Aady[i] *= -1;
+                }
+                Aax[i] += Aadx[i];
+                Aay[i] += Aady[i];
+                ctx.beginPath();
+                Aa[i] = ctx.fillStyle = "rgb(0,255,0)";
+                ctx.arc(Aax[i], Aay[i], raio, 0, 2 * Math.PI);
+                ctx.fill();
+            }
+            // ATUALIZAÇÃO DAS INFORMAÇÕES DOS HOMOZIGOTOS RECESSIVOS
+            for (let i = 0; i < aa.arrayLeght; i++) {
+                if ((aax[i] + raio > largCanvas) || (aax[i] < 0)) {
+                    aadx[i] *= -1;
+                }
+                if ((aay[i] + raio > altCanvas) || (aay[i] < 0)) {
+                    aady[i] *= -1;
+                }
+                aax[i] += aadx[i];
+                aay[i] += aady[i];
+                ctx.beginPath();
+                aa[i] = ctx.fillStyle = "rgb(0,0,255)";
+                ctx.arc(aax[i], aay[i], raio, 0, 2 * Math.PI);
+                ctx.fill();
+            }
+            // ATUALIZAÇÃO DAS INFORMAÇÕES DOS HOMOZIGOTOS DOMINANTES         
+            for (let i = 0; i < AA.arrayLeght; i++) {
+                if ((AAx[i] + raio > largCanvas) || (AAx[i] < 0)) {
+                    AAdx[i] *= -1;
+                }
+                if ((AAy[i] + raio > altCanvas) || (AAy[i] < 0)) {
+                    AAdy[i] *= -1;
+                }
+                AAx[i] += AAdx[i];
+                AAy[i] += AAdy[i];
+                ctx.beginPath();
+                AA[i] = ctx.fillStyle = "rgb(255,0,0)";
+                ctx.arc(AAx[i], AAy[i], raio, 0, 2 * Math.PI);
+                ctx.fill();
+            }
+            colisao();
+        };
+        function desenha() {
+
+            ctx.clearRect(0, 0, largCanvas, altCanvas);
+            ctx.font = "10px arial";
+            ctx.strokeStyle = "rgb(255,0,0)";
+            ctx.fillStyle = "rgb(255,0,0)";
+            ctx.strokeText("AA= " + AA.arrayLeght, 10, 10);
+            ctx.strokeStyle = "rgb(0,255,0)";
+            ctx.fillStyle = "rgb(0,255,0)";
+            ctx.strokeText("Aa= " + Aa.arrayLeght, 10, 20);
+            ctx.strokeStyle = "rgb(0,0,255)";
+            ctx.fillStyle = "rgb(0,0,255)";
+            ctx.strokeText("aa= " + aa.arrayLeght, 10, 30);
+
+            // INFORMAÇÕES INICIAIS DOS HOMOZIGOTOS DOMINANTES
+            for (let i = 0; i < AA.arrayLeght; i++) {
+                AAx[i] = (Math.random() * (largCanvas - raio));
+                AAy[i] = (Math.random() * (altCanvas - raio));
+                ctx.beginPath();
+                AA[i] = ctx.fillStyle = "rgb(255,0,0)";
+                ctx.arc(AAx[i], AAy[i], raio, 0, 2 * Math.PI);
+                ctx.fill();
+            }
+            // INFORMAÇÕES INICIAIS DOS HETEROZIGOTOS
+            for (let i = 0; i < Aa.arrayLeght; i++) {
+                Aax[i] = (Math.random() * (largCanvas - raio));
+                Aay[i] = (Math.random() * (altCanvas - raio));
+                ctx.beginPath();
+                Aa[i] = ctx.fillStyle = "rgb(0,255,0)";
+                ctx.arc(Aax[i], Aay[i], raio, 0, 2 * Math.PI);
+                ctx.fill();
+            }
+            // INFORMAÇÕES INICIAIS DOS HOMOZIGOTOS RECESSIVOS
+            for (let i = 0; i < aa.arrayLeght; i++) {
+                aax[i] = (Math.random() * (largCanvas - raio));
+                aay[i] = (Math.random() * (altCanvas - raio));
+                ctx.beginPath();
+                aa[i] = ctx.fillStyle = "rgb(0,0,255)";
+                ctx.arc(aax[i], aay[i], raio, 0, 2 * Math.PI);
+                ctx.fill();
+            }
+        };
+        function loop() {
+            if (parseInt(AA.arrayLeght) + parseInt(Aa.arrayLeght) + parseInt(aa.arrayLeght) < limiteIndividuos) {
+                window.requestAnimationFrame(loop, canvas);
+                atualiza();
+            } else {
+                if (alertaCruzamento) {
+                    alert("SIMULAÇÃO FINALIZADA!")
+                }
+                ctx.clearRect(0, 0, largCanvas, altCanvas);
+                ctx.font = "20px arial";
+                ctx.strokeStyle = "rgb(0,0,0)";
+                ctx.strokeText("SIMULAÇÃO FINALIZADA!", 0, 40);
+                ctx.fillStyle = "rgb(0,0,0)";
+                ctx.strokeText("SIMULAÇÃO FINALIZADA!", 0, 40);
+                ctx.font = "20px arial";
+                ctx.strokeStyle = "rgb(0,0,0)";
+                ctx.strokeText("Resultado:", 20, 60);
+                ctx.fillStyle = "rgb(0,0,0)";
+                ctx.strokeText("Resultado:", 20, 60);
+                ctx.strokeStyle = "rgb(255,0,0)";
+                ctx.strokeText("AA= " + AA.arrayLeght, 20, 100);
+                ctx.fillStyle = "rgb(255,0,0)";
+                ctx.strokeText("AA= " + AA.arrayLeght, 20, 100);
+                ctx.strokeStyle = "rgb(0,255,0)";
+                ctx.strokeText("Aa= " + Aa.arrayLeght, 20, 140);
+                ctx.fillStyle = "rgb(0,255,0)";
+                ctx.strokeText("Aa= " + Aa.arrayLeght, 20, 140);
+                ctx.strokeStyle = "rgb(0,0,255)";
+                ctx.strokeText("aa= " + aa.arrayLeght, 20, 180);
+                ctx.fillStyle = "rgb(0,0,255)";
+                ctx.strokeText("aa= " + aa.arrayLeght, 20, 180);
+
+                ctx.strokeStyle = "rgb(0,0,0)";
+                ctx.strokeText("POPULAÇÃO TOTAL: " + (parseInt(AA.arrayLeght) + parseInt(Aa.arrayLeght) + parseInt(aa.arrayLeght)), 20, 240);
+                ctx.fillStyle = "rgb(0,0,0)";
+                ctx.strokeText("POPULAÇÃO TOTAL: " + (parseInt(AA.arrayLeght) + parseInt(Aa.arrayLeght) + parseInt(aa.arrayLeght)), 20, 240);
+                ctx.font = "20px arial";
+            }
+        }
+        function colisao() {
+            // Colisão entre aa e aa
+            for (let i = 0; i < aa.arrayLeght; i++) {
+                for (let j = i + 1; j < aa.arrayLeght; j++) {
+                    if (Math.hypot(aax[i] - aax[j], aay[i] - aay[j]) <= raio) {
+                        if (alertaCruzamento) {
+                            alert("ocorreu cruzamento entre aa e aa! Resultado: aa!")
+                        }
+                        aa.arrayLeght++;
+                        aax.arrayLeght++;
+                        aay.arrayLeght++;
+                        desenha();
+                        break;
+                    }
+                }
+            }
+            // Colisão entre Aa e Aa
+            for (let i = 0; i < Aa.arrayLeght; i++) {
+                for (let j = i + 1; j < Aa.arrayLeght; j++) {
+                    if (Math.hypot(Aax[i] - Aax[j], Aay[i] - Aay[j]) <= raio) {
+                        var teste = Math.random();
+                        if (teste > 0.25) {      // Aa x Aa -> AA
+                            if (alertaCruzamento) {
+                                alert("ocorreu cruzamento entre Aa e Aa! Resultado: AA!")
+                            }
+                            AA.arrayLeght++;
+                            AAx.arrayLeght++;
+                            AAy.arrayLeght++;
+                            desenha();
+                            break;
+                        } else if (teste < 0.75) {  // Aa x Aa -> aa
+                            if (alertaCruzamento) {
+                                alert("ocorreu cruzamento entre Aa e Aa! Resultado: aa!")
+                            }
+                            aa.arrayLeght++;
+                            aax.arrayLeght++;
+                            aay.arrayLeght++;
+                            desenha();
+                            break;
+                        } else {      // Aa x Aa -> Aa
+                            if (alertaCruzamento) {
+                                alert("ocorreu cruzamento entre Aa e Aa! Resultado: Aa!")
+                            }
+                            Aa.arrayLeght++;
+                            Aax.arrayLeght++;
+                            Aay.arrayLeght++;
+                            desenha();
+                            break;
+                        }
+                    }
+                }
+            }
+            // Colisão entre Aa e aa
+            for (let i = 0; i < Aa.arrayLeght; i++) {
+                for (let j = i + 1; j < aa.arrayLeght; j++) {
+                    if (Math.hypot(Aax[i] - aax[j], Aay[i] - aay[j]) <= raio) {
+                        var teste = Math.random();
+                        if (teste > 0.5) {      // Aa x aa -> Aa
+                            if (alertaCruzamento) {
+                                alert("ocorreu cruzamento entre Aa e aa! Resultado: Aa!")
+                            }
+                            Aa.arrayLeght++;
+                            Aax.arrayLeght++;
+                            Aay.arrayLeght++;
+                            desenha();
+                            break;
+                        } else {      // Aa x aa -> aa
+                            if (alertaCruzamento) {
+                                alert("ocorreu cruzamento entre Aa e aa! Resultado: aa!")
+                            }
+                            aa.arrayLeght++;
+                            aax.arrayLeght++;
+                            aay.arrayLeght++;
+                            desenha();
+                            break;
+                        }
+                    }
+                }
+            }
+            // Colisão entre AA e AA
+            for (let i = 0; i < AA.arrayLeght; i++) {
+                for (let j = i + 1; j < AA.arrayLeght; j++) {
+                    if (Math.hypot(AAx[i] - AAx[j], AAy[i] - AAy[j]) <= raio) {
+                        if (alertaCruzamento) {
+                            alert("ocorreu cruzamento entre AA e AA! Resultado: AA!")
+                        }
+                        AA.arrayLeght++;
+                        AAx.arrayLeght++;
+                        AAy.arrayLeght++;
+                        desenha();
+                        break;
+                    }
+                }
+            }
+            // Colisão entre AA e Aa
+            for (let i = 0; i < AA.arrayLeght; i++) {
+                for (let j = i + 1; j < Aa.arrayLeght; j++) {
+                    if (Math.hypot(AAx[i] - Aax[j], AAy[i] - Aay[j]) <= raio) {
+                        var teste = Math.random();
+                        if (teste > 0.5) {      // AA x Aa -> AA
+                            if (alertaCruzamento) {
+                                alert("ocorreu cruzamento entre AA e Aa! Resultado: AA!")
+                            }
+                            AA.arrayLeght++;
+                            AAx.arrayLeght++;
+                            AAy.arrayLeght++;
+                            desenha();
+                            break;
+                        } else {                // AA x Aa -> Aa
+                            if (alertaCruzamento) {
+                                alert("ocorreu cruzamento entre AA e Aa! Resultado: Aa!")
+                            }
+                            Aa.arrayLeght++;
+                            Aax.arrayLeght++;
+                            Aay.arrayLeght++;
+                            desenha();
+                            break;
+                        }
+                    }
+                }
+            }
+            // Colisão entre AA e aa
+            for (let i = 0; i < AA.arrayLeght; i++) {
+                for (let j = i + 1; j < aa.arrayLeght; j++) {
+                    if (Math.hypot(AAx[i] - aax[j], AAy[i] - aay[j]) <= raio) {
+                        if (alertaCruzamento) {
+                            alert("ocorreu cruzamento entre AA e aa! Resultado: Aa!")
+                        }
+                        Aa.arrayLeght++;
+                        Aax.arrayLeght++;
+                        Aay.arrayLeght++;
+                        desenha();
+                        break;
+                    }
+                }
+            }
+        }
+    </script> <!-- TODO CÓDIGO JAVASCRIPT TERMINA AQUI -->
+    <!-- TODO CÓDIGO JAVASCRIPT TERMINA AQUI -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</html>
